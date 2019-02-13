@@ -24,13 +24,18 @@
     <font size="6">My URLs</font>
     <br>
     <% for (key in urls) { %>
+
     <li>
-      <b>
-        <%= key %> </b>
+      <a href='/u/<%=key%>' <b>
+        <%= key %></b></a>
       -
       <%= urls[key]%>
-
     </li>
+
+    <form method="POST" action='/urls/<%= key %>/delete'>
+      <input type='submit' value='Delete Link'>
+    </form>
+
     <% } %>
   </main>
 
