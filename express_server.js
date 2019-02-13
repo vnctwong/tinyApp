@@ -51,3 +51,9 @@ app.post("/urls", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+function generateRandomString() {
+  let newString = '';
+  newString = (Math.random() * (5 - 1) + 1).toString(36).substring(2, 8);
+  return newString;
+}
