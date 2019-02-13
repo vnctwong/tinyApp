@@ -10,17 +10,22 @@
   <title>TinyApp</title>
 </head>
 
+<header>
+  <% include ./partials/_header %>
+</header>
+
+
 <body style="font-size:20px; padding:50px;">
   <!-- Add EJS code here -->
-  <ul>
-    <% for (key in urls) { %>
-    <li>
-      <%= key %>
-      -
-      <%= urls[key]%>
-    </li>
-    <% } %>
-  </ul>
+
+  <% for (key in urls) { %>
+  <li>
+    <%= key %>
+    -
+    <%= urls[key]%>
+  </li>
+  <% } %>
+
 
   <a> link to shorten </a>
 
