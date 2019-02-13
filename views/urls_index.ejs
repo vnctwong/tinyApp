@@ -12,21 +12,28 @@
 
 
 <body style="font-size:20px; padding:50px;">
+
   <header>
     <% include ./partials/_header %>
   </header>
-  <!-- Add EJS code here -->
 
-  <% for (key in urls) { %>
-  <li>
-    <%= key %>
-    -
-    <%= urls[key]%>
-  </li>
-  <% } %>
-
-
-  <a> link to shorten </a>
+  <main>
+    <font size="9">TinyApp</font>
+    <br>
+    <a href=##> link to shorten </a>
+    <br>
+    <br>
+    <font size="6">My URLs</font>
+    <br>
+    <% for (key in urls) { %>
+    <li>
+      <b>
+        <%= key %> </b>
+      -
+      <%= urls[key]%>
+    </li>
+    <% } %>
+  </main>
 
 </body>
 
