@@ -20,19 +20,29 @@
     <a href='/urls/new'> Create New TinyURL </a>
     <br>
     <br>
-    <font size="6">TinyURL for
-      <a href=<%=longURL%>>
-        <%=longURL%></a>
+    <font size="6">
+      TinyURL for <a href='<%= longURL %>'>
+        <%= longURL %> </a>
     </font>
     <br>
     <br>
-    <a href='/u/<%=shortURL%>'>
-      <%=shortURL%></a>
+
+    <p>
+      <a href='/urls/<%= shortURL %>'>
+        <%= shortURL %></a>
+
+      <form class="form-inline" action="/urls/<%= shortURL %>" method='POST'>
+        <div class=" form-group mb-2">
+          <label for="longURL">Change URL for Key:</label>
+          <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
+          <button type="submit" class="btn btn-primary">Update URL</button>
+        </div>
+      </form>
     </p>
 
     <br>
-    <font size='6'><a href='/urls'>Back to index</a>
-    </font>
+    <br>
+    <a href='/urls'>Back to URL Index</a>
   </main>
 </body>
 

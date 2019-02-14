@@ -18,18 +18,23 @@
   </header>
 
   <main>
-    <a href='/urls/new'> Shorten New URL </a>
+    <font size="6"><a href='/urls/new'> Shorten New URL </a></font>
     <br>
     <br>
     <font size="6">My URLs</font>
     <br>
+    <br>
     <% for (key in urls) { %>
 
     <li>
-      <a href='/u/<%=key%>' <b>
-        <%= key %></b></a>
-      -
-      <%= urls[key]%>
+      <a href='/urls/<%=key%>'>
+        <%= key %></a>
+      -->
+      <a href='<%= urls[key]%>'>
+        <%= urls[key] %> </a>
+      <form method="GET" action="/urls/<%= key %>">
+        <input type='submit' value='Edit'>
+      </form>
     </li>
 
     <form method="POST" action='/urls/<%= key %>/delete'>
