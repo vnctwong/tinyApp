@@ -14,21 +14,27 @@
 
 <body style="font-size:20px; padding:50px;">
 
-  <% include partials/_header %>
-  <br>
-  <br>
-  <br>
-  <h3>Create TinyURL</h3>
-  <form class="form-inline" action="/urls" method="POST">
-    <div class="form-group mb-2">
-      <label for="longURL">Enter a URL:</label>
-      <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </form>
-  <br>
-  <br>
-  <a href='/urls'>Back to URL Index</a>
+  <header>
+    <% include ./partials/_header %>
+  </header>
+
+
+  <main>
+    <br>
+    <br>
+    <br>
+    <h3>Create TinyURL</h3>
+    <form class="form-inline" action="/urls" method="POST">
+      <div class="form-group mb-2">
+        <label for="longURL">Enter a URL:</label>
+        <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    <br>
+    <br>
+    <a href='/urls'>Back to URL Index</a>
+  </main>
 </body>
 
 </html>
