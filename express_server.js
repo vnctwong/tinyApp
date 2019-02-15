@@ -103,7 +103,7 @@ app.post('/login', (req, res) => {
       res.cookie("user_id", user.id);
       res.redirect('/urls');
     } else {
-      res.status(403).send(' or password incorrect');
+      res.status(403).send('password incorrect');
     }
   }
 });
