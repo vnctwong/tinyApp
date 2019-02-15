@@ -20,6 +20,14 @@
 
 
   <main>
+    <% if(!user) {%>
+    <p>
+      Log in / register to create URL
+      <br>
+      <a href='/urls'>Back to URL Index</a>
+    </p>
+    <% }%>
+    <% if(user) {%>
     <br>
     <br>
     <br>
@@ -36,5 +44,6 @@
     <a href='/urls'>Back to URL Index</a>
   </main>
 </body>
+<% } %>
 
 </html>
