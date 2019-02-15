@@ -1,26 +1,36 @@
 <body>
   <h1>TinyApp</h1>
 
-  <% if(username){ %>
+  <% if(locals.user){ %>
 
   <form action='/logout' method='POST'>
     <p style='display: inline-block'>
-
-      <%= username %>
-
+      <%= user %>
     </p>
     <button type='submit' class="btn btn-primary">Log Out</button>
+
   </form>
 
   <% } else { %>
 
-  <form class="form-inline" action="/login" method="POST">
-    <div class="form-group mb-2">
-      <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px; margin: 1em">
-      <button type="submit" class="btn btn-primary">Log In</button>
-    </div>
-  </form>
+  <body>
+
+    <font size="6"><a href='/register'> Register </a></font>
+    <font size='6'>|</font>
+    <font size="6"><a href='/login'> Log In </a></font>
+    <!--
+    <form class="form-inline" action="/register" method="POST">
+      <div class="form-group mb-2">
+        <input type="email" name="email" placeholder="Email" style="width: 200px; margin: 1em">
+        <br>
+        <input type='password' name='password' placeholder='Password' style="width: 200px; margin: 1em">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+  -->
+  </body>
 
   <% } %>
-
+  <br>
+  ---------------------------
 </body>

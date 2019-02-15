@@ -1,0 +1,22 @@
+<body>
+
+  <header>
+    <% include ./partials/_header %>
+  </header>
+
+
+  <main>
+    <form class="form-inline" action="/login" method="POST">
+      <div class="form-group mb-2">
+        <input type="email" name="email" placeholder="Email" style="width: 200px; margin: 1em">
+        <br>
+        <input type='password' name='password' placeholder='Password' style="width: 200px; margin: 1em">
+        <br>
+        <button type="submit" class="btn btn-primary">Log In</button>
+      </div>
+    </form>
+  </main>
+  <br>
+  <br>
+  <a href='/urls'>Back to URL Index</a>
+</body>
