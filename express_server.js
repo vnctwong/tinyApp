@@ -7,20 +7,26 @@ app.use(cookieParser());
 
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "rdmStr"
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "rdmStr"
+  }
 };
 
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+  "rdmStr": {
+    id: "rdmStr",
+    email: "1@email.com",
+    password: "1"
   },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+  "rdmStr2": {
+    id: "rdmStr2",
+    email: "2@email.com",
+    password: "2"
   }
 }
 
@@ -39,11 +45,12 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  let user = req.cookies["user_id"];
   let templateVars = {
-    urls: urlDatabase,
-    user: req.cookies["user_id"]
+    urls: urlsForUser(user),
+    user
   };
-  res.render("urls_index", templateVars);
+  res.render("urls", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -77,16 +84,29 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
-})
+  //see if logged in
+  if (!req.cookies['user_id']) {
+    //if not, return status code (403)
+    res.status(403).send('You need to Login to do this')
+    //else
+  } else {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  }
+});
 
 app.post('/urls/:shortURL', (req, res) => {
-
-  let shortURL = req.params.shortURL;
-  let longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  res.redirect('/urls');
+  //see if logged in
+  if (!req.cookies['user_id']) {
+    //if not, return status code (403)
+    res.status(403).send('You need to Login to do this')
+    //else
+  } else {
+    let shortURL = req.params.shortURL;
+    let longURL = req.body.longURL;
+    urlDatabase[shortURL] = longURL;
+    res.redirect('/urls');
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -173,3 +193,36 @@ function authenticateUser(email, password) {
     }
   }
 }
+
+function urlsForUser(id) {
+  let userUrls = {};
+  //loops through Url db
+  for (var key in urlDatabase) {
+    //if users[userID] = logged in ID
+    if (urlDatabase[key].userID === id) {
+      //returns short url obj
+      userUrls[key] = (urlDatabase[key].longURL);
+    }
+  }
+  return userUrls;
+}
+
+// const urlDatabase = {
+//   b6UTxQ: {
+//     longURL: "https://www.tsn.ca",
+//     userID: "rdmStr"
+//   },
+//   i3BoGr: {
+//     longURL: "https://www.google.ca",
+//     userID: "rdmStr"
+
+// const users = {
+//   "rdmStr": {
+//     id: "rdmStr",
+//     email: "1@email.com",
+//     password: "1"
+//   },
+//   "rdmStr2": {
+//     id: "rdmStr2",
+//     email: "2@email.com",
+//     password: "2"
