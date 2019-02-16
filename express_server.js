@@ -54,10 +54,11 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let user = req.session.user_id
+
   let templateVars = {
-    urls: urlsForUser(user),
-    user
+    urls: urlsForUser(req.session.user_id),
+    user: req.session.user_id,
+    email: users[req.session.user_id].email,
   };
   res.render("urls", templateVars);
 });
@@ -220,9 +221,8 @@ function urlsForUser(id) {
 }
 
 function httpCheck(string) {
-  if ((string.startsWith('https://'))) {
+  if ((string.startsWith('http://')) || (string.startsWith('https://'))) {
     return string;
-
   } else {
     return 'https://' + string;
   }
