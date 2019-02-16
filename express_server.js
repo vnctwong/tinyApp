@@ -1,11 +1,16 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-app.set("view engine", "ejs")
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
+const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2'],
 
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+app.set("view engine", "ejs")
 
 const urlDatabase = {
   b6UTxQ: {
@@ -51,7 +56,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let user = req.cookies["user_id"];
+  let user = req.session.user_id
   let templateVars = {
     urls: urlsForUser(user),
     user
@@ -61,7 +66,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    user: req.cookies["user_id"]
+    user: req.session.user_id
   };
   res.render("urls_new", templateVars);
 });
@@ -70,7 +75,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: req.cookies["user_id"]
+    user: req.session.user_id
   };
   res.render("urls_show", templateVars);
 });
@@ -83,7 +88,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
 
-  let userID = req.cookies['user_id']
+  let userID = req.session.user_id
   let short = generateRandomString()
   let long = req.body.longURL;
   urlDatabase[short] = {
@@ -95,7 +100,7 @@ app.post("/urls", (req, res) => {
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   //see if logged in
-  if (!req.cookies['user_id']) {
+  if (!req.session.user_id) {
     //if not, return status code (403)
     res.status(403).send('You need to Login to do this')
     //else
@@ -107,12 +112,12 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.post('/urls/:shortURL', (req, res) => {
   //see if logged in
-  if (!req.cookies['user_id']) {
+  if (!req.session.user_id) {
     //if not, return status code (403)
     res.status(403).send('You need to Login to do this')
     //else
   } else {
-    let userID = req.cookies['user_id']
+    let userID = req.session.user_id
     let shortURL = req.params.shortURL;
     let longURL = req.body.longURL;
     urlDatabase[shortURL] = {
@@ -130,7 +135,7 @@ app.post('/login', (req, res) => {
     res.status(400).send('Enter email & password');
 
   } else if (user) {
-    res.cookie("user_id", user.id);
+    req.session.user_id = user.id;
     res.redirect('/urls');
   } else {
     res.status(403).send('Email or Password incorrect');
@@ -139,13 +144,13 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect('/urls');
 });
 
 app.get('/register', (req, res) => {
   let templateVars = {
-    user: req.cookies["user_id"]
+    user: req.session.user_id
   };
   res.render('urls_register');
 });
@@ -168,7 +173,7 @@ app.post('/register', (req, res) => {
       email: req.body.email
     };
     users[user.id] = user
-    res.cookie('user_id', user.id);
+    req.session.user_id = user.id;
     console.log(user);
     res.redirect('/urls');
   }
