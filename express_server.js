@@ -1,16 +1,16 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
-const cookieSession = require('cookie-session')
+const PORT = 8080;
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2'],
 
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+
+  maxAge: 24 * 60 * 60 * 1000
 }))
-app.set("view engine", "ejs")
+app.set("view engine", "ejs");
 
 const urlDatabase = {
   b6UTxQ: {
@@ -25,7 +25,6 @@ const urlDatabase = {
     longURL: "https://www.espn.com",
     userID: "rdmStr2"
   }
-
 };
 
 const users = {
@@ -39,14 +38,13 @@ const users = {
     email: "2@email.com",
     password: bcrypt.hashSync("2", 10)
   }
-}
+};
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-//handler = '/'
 app.get("/", (req, res) => {
   res.redirect('/urls');
 });
@@ -81,29 +79,28 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL
+  let longURL = urlDatabase[req.params.shortURL].longURL
   res.redirect(longURL);
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
+  console.log(req.body);
 
   let userID = req.session.user_id
   let short = generateRandomString()
-  let long = req.body.longURL;
+  let long = httpCheck(req.body.longURL);
   urlDatabase[short] = {
     longURL: long,
     userID: userID,
   };
-  res.redirect('/urls/' + short); ///'urls/' + short
+  res.redirect('/urls/' + short);
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  //see if logged in
+
   if (!req.session.user_id) {
-    //if not, return status code (403)
     res.status(403).send('You need to Login to do this')
-    //else
+
   } else {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
@@ -111,15 +108,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  //see if logged in
+
   if (!req.session.user_id) {
-    //if not, return status code (403)
     res.status(403).send('You need to Login to do this')
-    //else
+
   } else {
     let userID = req.session.user_id
     let shortURL = req.params.shortURL;
-    let longURL = req.body.longURL;
+    let longURL = httpCheck(req.body.longURL);
     urlDatabase[shortURL] = {
       longURL: longURL,
       userID: userID,
@@ -137,6 +133,7 @@ app.post('/login', (req, res) => {
   } else if (user) {
     req.session.user_id = user.id;
     res.redirect('/urls');
+
   } else {
     res.status(403).send('Email or Password incorrect');
   }
@@ -156,15 +153,14 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  //if .body empty, 400
+
   if (!req.body.email || !req.body.password) {
     res.status(400).send('Enter email & password');
 
   } else if (emailCheck(req.body.email)) {
-    res.status(400).send('Email taken');
+    res.status(400).send('Email already taken');
 
   } else {
-    //adds new user object to global userDir
     let password = req.body.password;
     let hashedPassword = bcrypt.hashSync(password, 10)
     let user = {
@@ -195,6 +191,7 @@ function generateRandomString() {
 
 function emailCheck(newEmail) {
   for (var key in users) {
+
     if (newEmail === users[key].email) {
       return true;
     }
@@ -203,6 +200,7 @@ function emailCheck(newEmail) {
 
 function authenticateUser(email, password) {
   for (var key in users) {
+
     if (users[key].email === email &&
       bcrypt.compareSync(password, users[key].password)) {
       return users[key];
@@ -212,34 +210,20 @@ function authenticateUser(email, password) {
 
 function urlsForUser(id) {
   let userUrls = {};
-  //loops through Url db
   for (var key in urlDatabase) {
-    //if users[userID] = logged in ID
+
     if (urlDatabase[key].userID === id) {
-      //returns short url obj
       userUrls[key] = (urlDatabase[key].longURL);
     }
   }
   return userUrls;
 }
 
+function httpCheck(string) {
+  if ((string.startsWith('https://'))) {
+    return string;
 
-// const urlDatabase = {
-//   b6UTxQ: {
-//     longURL: "https://www.tsn.ca",
-//     userID: "rdmStr"
-//   },
-//   i3BoGr: {
-//     longURL: "https://www.google.ca",
-//     userID: "rdmStr"
-
-// const users = {
-//   "rdmStr": {
-//     id: "rdmStr",
-//     email: "1@email.com",
-//     password: "1"
-//   },
-//   "rdmStr2": {
-//     id: "rdmStr2",
-//     email: "2@email.com",
-//     password: "2"
+  } else {
+    return 'https://' + string;
+  }
+}
