@@ -1,9 +1,10 @@
-let express = require("express");
-let app = express();
-let PORT = 8080; // default port 8080
+const express = require("express");
+const app = express();
+const PORT = 8080; // default port 8080
 app.set("view engine", "ejs")
-let cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 app.use(cookieParser());
+const bcrypt = require('bcrypt');
 
 
 const urlDatabase = {
@@ -14,19 +15,24 @@ const urlDatabase = {
   i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "rdmStr"
+  },
+  frwtyh: {
+    longURL: "https://www.espn.com",
+    userID: "rdmStr2"
   }
+
 };
 
 const users = {
   "rdmStr": {
     id: "rdmStr",
     email: "1@email.com",
-    password: "1"
+    password: bcrypt.hashSync("1", 10)
   },
   "rdmStr2": {
     id: "rdmStr2",
     email: "2@email.com",
-    password: "2"
+    password: bcrypt.hashSync("2", 10)
   }
 }
 
@@ -118,22 +124,18 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  //1. check whether the email or password is empty
+  let user = authenticateUser(req.body.email, req.body.password);
 
   if (!req.body.email || !req.body.password) {
     res.status(400).send('Enter email & password');
+
+  } else if (user) {
+    res.cookie("user_id", user.id);
+    res.redirect('/urls');
   } else {
-    //Email and password were entered.
-    //Email and password exists in the DB
-    let user = authenticateUser(req.body.email, req.body.password);
-    if (user) {
-      //everything is fine
-      res.cookie("user_id", user.id);
-      res.redirect('/urls');
-    } else {
-      res.status(403).send('password incorrect');
-    }
+    res.status(403).send('Email or Password incorrect');
   }
+
 });
 
 app.post('/logout', (req, res) => {
@@ -150,8 +152,6 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   //if .body empty, 400
-
-
   if (!req.body.email || !req.body.password) {
     res.status(400).send('Enter email & password');
 
@@ -160,9 +160,11 @@ app.post('/register', (req, res) => {
 
   } else {
     //adds new user object to global userDir
+    let password = req.body.password;
+    let hashedPassword = bcrypt.hashSync(password, 10)
     let user = {
       id: generateRandomString(),
-      password: req.body.password,
+      password: hashedPassword,
       email: req.body.email
     };
     users[user.id] = user
@@ -196,7 +198,8 @@ function emailCheck(newEmail) {
 
 function authenticateUser(email, password) {
   for (var key in users) {
-    if (users[key].email === email && users[key].password) {
+    if (users[key].email === email &&
+      bcrypt.compareSync(password, users[key].password)) {
       return users[key];
     }
   }
@@ -214,6 +217,7 @@ function urlsForUser(id) {
   }
   return userUrls;
 }
+
 
 // const urlDatabase = {
 //   b6UTxQ: {
