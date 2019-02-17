@@ -12,43 +12,45 @@ app.use(cookieSession({
 }))
 app.set("view engine", "ejs");
 
+//creates random string for url and username
 function generateRandomString() {
   let newString = '';
   newString = (Math.random() * (5 - 1) + 1).toString(36).substring(2, 8);
   return newString;
 }
-
+//check if email is taken
 function emailCheck(newEmail) {
-  for (var key in users) {
 
+  for (var key in users) {
     if (newEmail === users[key].email) {
       return true;
     }
   }
 };
-
+//checks if password matches account
 function authenticateUser(email, password) {
-  for (var key in users) {
 
+  for (var key in users) {
     if (users[key].email === email &&
       bcrypt.compareSync(password, users[key].password)) {
       return users[key];
     }
   }
 }
-
+//regulates saved user urls
 function urlsForUser(id) {
   let userUrls = {};
-  for (var key in urlDatabase) {
 
+  for (var key in urlDatabase) {
     if (urlDatabase[key].userID === id) {
       userUrls[key] = (urlDatabase[key].longURL);
     }
   }
   return userUrls;
 }
-
+//converts all urls to http protocol
 function httpCheck(string) {
+
   if ((string.startsWith('http://')) || (string.startsWith('https://'))) {
     return string;
   } else {

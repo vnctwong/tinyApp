@@ -1,26 +1,25 @@
 <body>
+
   <h1>TinyApp</h1>
+
+  <% if( !user ){ %>
+
+  <body>
+    <font size="6"><a href='/register'> Register </a></font>
+    <font size='6'>|</font>
+    <font size="6"><a href='/login'> Log In </a></font>
+  </body>
+  <% } %>
+
 
   <% if( user ){ %>
 
   <form action='/logout' method='POST'>
-
     <p style='display: inline-block'>
       <%= users[user].email %>
     </p>
     <button type='submit' class="btn btn-primary">Log Out</button>
-
   </form>
-
-  <% } else { %>
-
-  <body>
-
-    <font size="6"><a href='/register'> Register </a></font>
-    <font size='6'>|</font>
-    <font size="6"><a href='/login'> Log In </a></font>
-
-  </body>
 
   <% } %>
   <br>
