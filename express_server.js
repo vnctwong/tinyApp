@@ -54,26 +54,29 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let user = req.session.user_id
+
   let templateVars = {
-    urls: urlsForUser(user),
-    user
+    urls: urlsForUser(req.session.user_id),
+    users,
+    user: req.session.user_id,
   };
   res.render("urls", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    user: req.session.user_id
+    users,
+    user: req.session.user_id,
   };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
+    users,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: req.session.user_id
+    user: req.session.user_id,
   };
   res.render("urls_show", templateVars);
 });
@@ -147,9 +150,14 @@ app.post('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
   let templateVars = {
-    user: req.session.user_id
+    users,
+    user: req.session.user_id,
   };
-  res.render('urls_register');
+  if (req.session.user) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_register', templateVars);
+  }
 });
 
 app.post('/register', (req, res) => {
@@ -176,7 +184,15 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('urls_login');
+  let templateVars = {
+    users,
+    user: req.session.user_id,
+  };
+  if (req.session.user) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_login', templateVars);
+  }
 });
 
 app.listen(PORT, () => {
@@ -220,9 +236,8 @@ function urlsForUser(id) {
 }
 
 function httpCheck(string) {
-  if ((string.startsWith('https://'))) {
+  if ((string.startsWith('http://')) || (string.startsWith('https://'))) {
     return string;
-
   } else {
     return 'https://' + string;
   }

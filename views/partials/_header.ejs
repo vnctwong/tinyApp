@@ -1,11 +1,11 @@
 <body>
   <h1>TinyApp</h1>
 
-  <% if(locals.user){ %>
+  <% if( user ){ %>
 
   <form action='/logout' method='POST'>
     <p style='display: inline-block'>
-      <%= user %>
+      <%= users[user].email %>
     </p>
     <button type='submit' class="btn btn-primary">Log Out</button>
 
