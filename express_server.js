@@ -12,7 +12,52 @@ app.use(cookieSession({
 }))
 app.set("view engine", "ejs");
 
+function generateRandomString() {
+  let newString = '';
+  newString = (Math.random() * (5 - 1) + 1).toString(36).substring(2, 8);
+  return newString;
+}
+
+function emailCheck(newEmail) {
+  for (var key in users) {
+
+    if (newEmail === users[key].email) {
+      return true;
+    }
+  }
+};
+
+function authenticateUser(email, password) {
+  for (var key in users) {
+
+    if (users[key].email === email &&
+      bcrypt.compareSync(password, users[key].password)) {
+      return users[key];
+    }
+  }
+}
+
+function urlsForUser(id) {
+  let userUrls = {};
+  for (var key in urlDatabase) {
+
+    if (urlDatabase[key].userID === id) {
+      userUrls[key] = (urlDatabase[key].longURL);
+    }
+  }
+  return userUrls;
+}
+
+function httpCheck(string) {
+  if ((string.startsWith('http://')) || (string.startsWith('https://'))) {
+    return string;
+  } else {
+    return 'https://' + string;
+  }
+}
+
 const urlDatabase = {
+
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
     userID: "rdmStr"
@@ -28,6 +73,7 @@ const urlDatabase = {
 };
 
 const users = {
+
   "rdmStr": {
     id: "rdmStr",
     email: "1@email.com",
@@ -54,16 +100,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-
   let templateVars = {
     urls: urlsForUser(req.session.user_id),
-<<<<<<< HEAD
-    user: req.session.user_id,
-    email: users[req.session.user_id].email,
-=======
     users,
     user: req.session.user_id,
->>>>>>> bugfix/addEmailToTemplates
   };
   res.render("urls", templateVars);
 });
@@ -203,47 +243,3 @@ app.get('/login', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-function generateRandomString() {
-  let newString = '';
-  newString = (Math.random() * (5 - 1) + 1).toString(36).substring(2, 8);
-  return newString;
-}
-
-function emailCheck(newEmail) {
-  for (var key in users) {
-
-    if (newEmail === users[key].email) {
-      return true;
-    }
-  }
-};
-
-function authenticateUser(email, password) {
-  for (var key in users) {
-
-    if (users[key].email === email &&
-      bcrypt.compareSync(password, users[key].password)) {
-      return users[key];
-    }
-  }
-}
-
-function urlsForUser(id) {
-  let userUrls = {};
-  for (var key in urlDatabase) {
-
-    if (urlDatabase[key].userID === id) {
-      userUrls[key] = (urlDatabase[key].longURL);
-    }
-  }
-  return userUrls;
-}
-
-function httpCheck(string) {
-  if ((string.startsWith('http://')) || (string.startsWith('https://'))) {
-    return string;
-  } else {
-    return 'https://' + string;
-  }
-}

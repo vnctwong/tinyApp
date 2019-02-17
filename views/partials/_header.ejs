@@ -4,13 +4,9 @@
   <% if( user ){ %>
 
   <form action='/logout' method='POST'>
-    <p style='display: inline-block'>
-<<<<<<< HEAD
-      <%= email %>
 
-=======
+    <p style='display: inline-block'>
       <%= users[user].email %>
->>>>>>> bugfix/addEmailToTemplates
     </p>
     <button type='submit' class="btn btn-primary">Log Out</button>
 
