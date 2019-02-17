@@ -141,7 +141,7 @@ app.post("/urls", (req, res) => {
   let long = httpCheck(req.body.longURL);
   urlDatabase[short] = {
     longURL: long,
-    userID: userID,
+    userID: userID
   };
   res.redirect('/urls/' + short);
 });
